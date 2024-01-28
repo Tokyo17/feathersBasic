@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node index.ts"
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +19,10 @@
   "dependencies": {
     "@feathersjs/feathers": "^5.0.21",
     "@feathersjs/koa": "^5.0.21",
-    "@feathersjs/socketio": "^5.0.21"
+    "@feathersjs/socketio": "^5.0.21",
+    "dotenv": "^16.4.1",
+    "knex": "^3.1.0",
+    "mysql": "^2.18.1",
+    "nodemon": "^3.0.3"
   }
 }
