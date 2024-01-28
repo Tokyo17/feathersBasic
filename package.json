@@ -1,0 +1,23 @@
+{
+  "name": "feather",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@feathersjs/feathers": "^5.0.21",
+    "@feathersjs/koa": "^5.0.21",
+    "@feathersjs/socketio": "^5.0.21"
+  }
+}
