@@ -72,10 +72,13 @@ type ServiceTypes = {
 const app = koa<ServiceTypes>(feathers())
 
 app.use(cors({
-  origin:"*",
-  allowHeaders:"*",
-  allowMethods:"*"
-}))
+  origin: '*', // Izinkan akses dari semua domain
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE'], // Izinkan metode permintaan yang diizinkan
+  allowHeaders: ['Content-Type', 'Authorization'], // Izinkan header yang diizinkan
+  exposeHeaders: ['Content-Range', 'X-Content-Range'], // Izinkan header yang dapat diakses oleh klien
+  credentials: true, // Izinkan pengiriman kredensial seperti cookies atau header otentikasi
+}));
+
 app.use(serveStatic('.'))
 app.use(errorHandler())
 app.use(bodyParser())
