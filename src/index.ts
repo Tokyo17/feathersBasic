@@ -90,34 +90,34 @@ app.use(errorHandler())
 app.use(bodyParser())
 app.configure(rest())
 
-app.configure(
-  socketio({
-    cors: {
-      origin: "*",
-      allowedHeaders:"*",
-      methods:"*", 
-    }
-  }))
+// app.configure(
+//   socketio({
+//     cors: {
+//       origin: "*",
+//       allowedHeaders:"*",
+//       methods:"*", 
+//     }
+//   }))
   
 // Register our messages service
 app.use('messages', new MessageService())
 app.use('users', new UserService()); 
 
-app.on('connection', (connection) =>{ 
-app.channel('everybody').join(connection)})
-app.publish((_data) => app.channel('everybody'))
+// app.on('connection', (connection) =>{ 
+// app.channel('everybody').join(connection)})
+// app.publish((_data) => app.channel('everybody'))
 
 
 
 app.listen(3030)
   .then(() => console.log('Feathers server listening on localhost:3030'))
 
-app.service('messages').create({
-  text: 'Hello world from the server',
-  name:""
-})
+// app.service('messages').create({
+//   text: 'Hello world from the server',
+//   name:""
+// })
 
-app.service('messages').on('created', (message: Message) => {
-  console.log('New message received:', message);
-});
+// app.service('messages').on('created', (message: Message) => {
+//   console.log('New message received:', message);
+// });
 
