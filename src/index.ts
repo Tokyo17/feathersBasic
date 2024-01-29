@@ -25,7 +25,8 @@ class UserService {
     let buku = await knex('Users');
 
     app.service('messages').create({
-      text: 'Success get users'
+      text: 'Success get users',
+      name:""
     })
     return buku;
   }
@@ -34,6 +35,7 @@ class UserService {
 interface Message {
   id?: number
   text: string
+  name:string
 }
 
 
@@ -45,11 +47,12 @@ class MessageService {
     return this.messages
   }
 
-  async create(data: Pick<Message, 'text'>) {
+  async create(data: Pick<Message, 'text' | 'name'>) {
     console.log(data,this.messages)
     const message: Message = {
       id: this.messages.length,
-      text: data.text
+      text: data.text,
+      name:data.name
     }
 
 
@@ -95,7 +98,8 @@ app.listen(3030)
   .then(() => console.log('Feathers server listening on localhost:3030'))
 
 app.service('messages').create({
-  text: 'Hello world from the server'
+  text: 'Hello world from the server',
+  name:""
 })
 
 app.service('messages').on('created', (message: Message) => {
