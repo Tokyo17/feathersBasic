@@ -71,7 +71,11 @@ type ServiceTypes = {
 
 const app = koa<ServiceTypes>(feathers())
 
-app.use(cors())
+app.use(cors({
+  origin:"*",
+  allowHeaders:"*",
+  allowMethods:"*"
+}))
 app.use(serveStatic('.'))
 app.use(errorHandler())
 app.use(bodyParser())
@@ -80,7 +84,9 @@ app.configure(rest())
 app.configure(
   socketio({
     cors: {
-      origin: "*"
+      origin: "*",
+      allowedHeaders:"*",
+      methods:"*", 
     }
   }))
   
