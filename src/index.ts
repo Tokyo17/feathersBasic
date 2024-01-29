@@ -78,6 +78,12 @@ app.use(cors({
   exposeHeaders: ['Content-Range', 'X-Content-Range'], // Izinkan header yang dapat diakses oleh klien
   credentials: true, // Izinkan pengiriman kredensial seperti cookies atau header otentikasi
 }));
+app.use(async (ctx, next) => {
+  ctx.set('Access-Control-Allow-Origin', '*');
+  ctx.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+  await next();
+});
+
 
 app.use(serveStatic('.'))
 app.use(errorHandler())
