@@ -1,89 +1,102 @@
-import { feathers } from '@feathersjs/feathers'
-import { koa, rest, bodyParser, errorHandler, serveStatic,cors } from '@feathersjs/koa'
-import socketio from '@feathersjs/socketio'
-import type { Params, Id, NullableId } from '@feathersjs/feathers'
+import { feathers,Application } from '@feathersjs/feathers';
+import { koa, rest, bodyParser, errorHandler, serveStatic, cors } from '@feathersjs/koa';
+import type { Params, Id, NullableId } from '@feathersjs/feathers';
+import Knex from 'knex';
+import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
+import { authenticate } from '@feathersjs/authentication';
+import { LocalStrategy } from '@feathersjs/authentication-local'
+
+
 require('dotenv').config();
 
-const knex = require('knex')({
-    client: 'mysql',
-    connection: process.env.DATABASE_URL
-  });
-
-
-
-class UserService {
-  async find() {
-    let buku = await knex('Users');
-    return buku;
-  }
-}
+const knex = Knex({
+  client: 'mysql',
+  connection: process.env.DATABASE_URL,
+});
 
 interface Mahasiswa {
-  id?: number
-  alamat: string
-  nama:string
-  usia:number
-  foto:string
+  id?: number;
+  alamat: string;
+  nama: string;
+  usia: number;
+  foto: string;
 }
-
 
 class MahasiswaService {
-  mahasiswa: Mahasiswa[] = []
   async find() {
-    let data = await knex('mahasiswa');
-    return data
+    const data = await knex('mahasiswa');
+    return data;
   }
-  async create(data: Mahasiswa) {
-     console.log(data)
-    const newMahasiswa = await knex('mahasiswa').insert(data);
-    return{ 
-      status:"success",
-      data:newMahasiswa};
-  }
-  async remove(id: NullableId, params: Params) {
-    console.log(id,params.query)
-     await knex('mahasiswa').where('id', id).del()
-      return {
-        status:"succss delete"
-      }
-    }
-}
 
+  async create(data: Mahasiswa) {
+    try {
+      const [newMahasiswa] = await knex('mahasiswa').insert(data);
+      console.log(newMahasiswa);
+      return {
+        status: 'success',
+        data: newMahasiswa,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 'error',
+        message: 'Failed to create Mahasiswa',
+      };
+    }
+  }
+
+  async update(id: NullableId, data: Mahasiswa) {
+    try {
+      const updatedMahasiswa = await knex('mahasiswa').where('id', id).update(data);
+      console.log(updatedMahasiswa);
+      return {
+        status: 'success',
+        data: updatedMahasiswa,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 'error',
+        message: 'Failed to update Mahasiswa',
+      };
+    }
+  }
+
+  async remove(id: NullableId, params: Params) {
+    try {
+      await knex('mahasiswa').where('id', id).del();
+      return {
+        status: 'success',
+        message: 'Successfully deleted Mahasiswa',
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 'error',
+        message: 'Failed to delete Mahasiswa',
+      };
+    }
+  }
+}
 
 type ServiceTypes = {
   mahasiswa: MahasiswaService;
-  users: UserService; 
 };
 
+const app = koa<ServiceTypes>(feathers());
 
-const app = koa<ServiceTypes>(feathers())
+app.use(
+  cors({
+    origin: '*',
+  })
+);
 
-app.use(cors({
-  origin: '*', // Izinkan akses dari semua domain
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE'], // Izinkan metode permintaan yang diizinkan
-  allowHeaders: ['Content-Type', 'Authorization'], // Izinkan header yang diizinkan
-  exposeHeaders: ['Content-Range', 'X-Content-Range'], // Izinkan header yang dapat diakses oleh klien
-  credentials: true, // Izinkan pengiriman kredensial seperti cookies atau header otentikasi
-}));
-
-
-app.use(serveStatic('.'))
-app.use(errorHandler())
-app.use(bodyParser())
-app.configure(rest())
-
-  
-// Register our messages service
-app.use('mahasiswa', new MahasiswaService())
-app.use('users', new UserService()); 
+app.use(serveStatic('.'));
+app.use(errorHandler());
+app.use(bodyParser());
+app.configure(rest());
 
 
-app.listen(3030)
-  .then(() => console.log('Feathers server listening on localhost:3030'))
+app.use('mahasiswa', new MahasiswaService());
 
-
-
-// app.service('messages').on('created', (message: Message) => {
-//   console.log('New message received:', message);
-// });
-
+app.listen(3030).then(() => console.log('Feathers server listening on localhost:3030'));
